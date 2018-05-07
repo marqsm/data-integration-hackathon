@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/streamr-dev/data-integration-hackathon#readme",
   "dependencies": {
+    "axios": "^0.18.0",
+    "lodash": "^4.17.10",
     "streamr-client": "^0.10.2"
   }
 }
