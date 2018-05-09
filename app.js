@@ -92,7 +92,9 @@ async function tickersGenerateEventAndSend(tickerStreams, i) {
         for (let symbol in tickers) {
             if (tickers.hasOwnProperty(symbol)) {
                 const tickerDataPoint = tickerToDataPoint(tickers[symbol], i);
-                await tickerStreams[symbol].produce(tickerDataPoint);
+                let stream = await tickerStreams[symbol];
+                stream.produce(tickerDataPoint);
+                // console.log('tickerStream for ' + symbol, stream);
                 console.info(`Event sent for ${symbol}:`, tickerDataPoint);
             }
         }
