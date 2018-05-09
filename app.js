@@ -4,7 +4,7 @@ const axios = require('axios');
 
 // Ahoy Hacker, fill in this!
 const STREAM_NAME = 'COINMARKETCAP';
-const POLL_FREQUENCY = 3 * 1000;
+const POLL_FREQUENCY = 25 * 1000;
 
 const API_KEY = process.env.API_KEY
 if (API_KEY === undefined) {
