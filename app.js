@@ -48,7 +48,7 @@ async function main() {
             console.log('All streams created: ');
         });
     // Generate and produce randomized data to Stream
-    // await globalGenerateEventAndSend(streamGlobal, 0);
+    await globalGenerateEventAndSend(streamGlobal, 0);
     // await tickerGenerateEventAndSend(streamTicker, 0);
     await tickersGenerateEventAndSend(tickerStreams, 0);
 }
