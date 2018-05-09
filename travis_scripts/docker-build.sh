@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export OWNER=<owner>
-export IMAGE_NAME=<image_name>
+export OWNER=marqsm
+export IMAGE_NAME=streamr_cmc
 export VCS_REF=`git rev-parse --short HEAD`
 export IMAGE_VERSION=0.2.${TRAVIS_BUILD_NUMBER}
 export QNAME=${OWNER}/${IMAGE_NAME}
@@ -17,7 +17,4 @@ docker build \
 
 docker tag ${GIT_TAG} ${BUILD_TAG}
 docker tag ${GIT_TAG} ${LATEST_TAG}
-docker login -u "${DOCKER_USER}" -p "${DOCKER_PASS}"
-if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
 docker push ${LATEST_TAG}
-fi
