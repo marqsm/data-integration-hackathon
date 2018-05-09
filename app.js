@@ -26,30 +26,30 @@ async function main() {
     });
     console.info("Initialized stream:", streamGlobal.id);
 
-    const streamTicker = await client.getOrCreateStream({
-        name: 'COINMARKETCAP_BTC'
+    const allTickersStream = await client.getOrCreateStream({
+        name: 'Coinmarketcap Top 100'
     });
-    console.info("Initialized stream:", streamGlobal.id);
+    console.info("Initialized stream:", allTickersStream.id);
 
     // Generate streams for each ticker/symbol (BTC, ETH, ...)
     const tickers = await getTickersData();
-// TODO: when creating streams, just use .all() to bundle them to avoid unnecessary waiting
+
+    // Create streams, collect to tickerStreams by ticker. For ex. tickerStream['BTC']
     for (let symbol in tickers) {
         const stream = client.getOrCreateStream({
             name: `Coinmarketcap data for ${symbol}`
         });
-        // console.log('Initialized stream for ' + symbol + ':', stream.id);
         if (tickers.hasOwnProperty(symbol)) {
             tickerStreams[symbol] = stream;
         }
     }
 
     axios.all(_.values(tickerStreams)).then((values) => {
-            console.log('All streams created: ');
-        });
+        console.log('All streams created: ');
+    });
     // Generate and produce randomized data to Stream
     await globalGenerateEventAndSend(streamGlobal, 0);
-    // await tickerGenerateEventAndSend(streamTicker, 0);
+    await sendAllTickersStream(allTickersStream, 0);
     await tickersGenerateEventAndSend(tickerStreams, 0);
 }
 
@@ -104,19 +104,17 @@ async function tickersGenerateEventAndSend(tickerStreams, i) {
     setTimeout(tickersGenerateEventAndSend.bind(null, tickerStreams, i + 1), POLL_FREQUENCY);
 }
 
-// async function tickerGenerateEventAndSend(stream, i) {
-//     // Create stream for
-//     try {
-//         const tickerResponse = await axios.get('https://api.coinmarketcap.com/v2/ticker/1/?convert=BTC');
-//         const tickerDataPoint = tickerToDataPoint(tickerResponse.data, i);
-//         await stream.produce(tickerDataPoint);
-//         console.info('Event sent:', tickerDataPoint);
-//
-//     } catch (error) {
-//         console.log(error);
-//     }
-//     setTimeout(tickerGenerateEventAndSend.bind(null, stream, i + 1), POLL_FREQUENCY);
-// }
+async function sendAllTickersStream(stream, i) {
+    // Create stream for
+    try {
+        const tickerResponse = await getTickersData();
+        await stream.produce(tickerResponse);
+        console.info('AllTickersStream event sent:', tickerResponse);
+    } catch (error) {
+        console.log(error);
+    }
+    setTimeout(sendAllTickersStream.bind(null, stream, i + 1), POLL_FREQUENCY);
+}
 
 
 function globalToDataPoint(response, messageNo) {
